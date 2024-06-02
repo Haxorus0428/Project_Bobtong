@@ -1,7 +1,5 @@
 package com.example.project_bobtong;
 
-// RestaurantAdapter.java
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +30,16 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Restaurant restaurant = restaurants.get(position);
-        holder.bind(restaurant);
+        if (restaurant != null) {
+            String title = restaurant.getTitle();
+            if (title != null) {
+                title = title.replaceAll("<b>", "").replaceAll("</b>", "");
+                holder.textViewName.setText(title);
+            } else {
+                holder.textViewName.setText("Unknown Restaurant");
+            }
+            holder.textViewAddress.setText(restaurant.getAddress());
+        }
     }
 
     @Override
@@ -43,14 +50,17 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView textViewName;
+        private TextView textViewAddress;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewName = itemView.findViewById(R.id.textViewName);
+            textViewAddress = itemView.findViewById(R.id.textViewAddress);
         }
 
         public void bind(Restaurant restaurant) {
-            textViewName.setText(restaurant.getName());
+            textViewName.setText(restaurant.getTitle());
+            textViewAddress.setText(restaurant.getAddress());
         }
     }
 }
