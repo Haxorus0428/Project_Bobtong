@@ -8,15 +8,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.ViewHolder> {
 
-    private List<Restaurant> restaurants = new ArrayList<>();
+    private List<Restaurant> mRestaurants;
 
     public void setRestaurants(List<Restaurant> restaurants) {
-        this.restaurants = restaurants;
+        this.mRestaurants = restaurants;
         notifyDataSetChanged();
     }
 
@@ -29,38 +28,24 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Restaurant restaurant = restaurants.get(position);
-        if (restaurant != null) {
-            String title = restaurant.getTitle();
-            if (title != null) {
-                title = title.replaceAll("<b>", "").replaceAll("</b>", "");
-                holder.textViewName.setText(title);
-            } else {
-                holder.textViewName.setText("Unknown Restaurant");
-            }
-            holder.textViewAddress.setText(restaurant.getAddress());
-        }
+        Restaurant restaurant = mRestaurants.get(position);
+        holder.textViewName.setText(restaurant.getTitle());
+        holder.textViewAddress.setText(restaurant.getAddress());
     }
 
     @Override
     public int getItemCount() {
-        return restaurants.size();
+        return mRestaurants == null ? 0 : mRestaurants.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView textViewName;
+        TextView textViewAddress;
 
-        private TextView textViewName;
-        private TextView textViewAddress;
-
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewName = itemView.findViewById(R.id.textViewName);
             textViewAddress = itemView.findViewById(R.id.textViewAddress);
-        }
-
-        public void bind(Restaurant restaurant) {
-            textViewName.setText(restaurant.getTitle());
-            textViewAddress.setText(restaurant.getAddress());
         }
     }
 }
