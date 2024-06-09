@@ -9,26 +9,46 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MyPageActivity extends AppCompatActivity {
 
-    private FirebaseAuth mAuth;
+    private Button buttonLogout;
+    private Button buttonMainPage;
+    private Button buttonMyReviews;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mypage);
 
-        mAuth = FirebaseAuth.getInstance();
-        Button btnLogout = findViewById(R.id.btnLogout);
+        buttonLogout = findViewById(R.id.buttonLogout);
+        buttonMainPage = findViewById(R.id.buttonMainPage);
+        buttonMyReviews = findViewById(R.id.buttonMyReviews);
 
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mAuth.signOut();
-                startActivity(new Intent(MyPageActivity.this, MainActivity.class));
-                finish();
-            }
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            // 로그인이 되어있지 않으면 LoginActivity로 이동
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
+
+        buttonLogout.setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+        });
+
+        buttonMainPage.setOnClickListener(v -> {
+            // 메인 페이지로 이동
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        });
+
+        buttonMyReviews.setOnClickListener(v -> {
+            // 내가 작성한 리뷰 페이지로 이동
+            startActivity(new Intent(this, MyReviewsActivity.class));
         });
     }
 }
