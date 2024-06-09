@@ -26,6 +26,7 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".SignupActivity"></activity>
         <activity android:name=".CategoryActivity" android:exported="true"/>
         <activity android:name=".BookmarkActivity" android:exported="true"/>
         <activity android:name=".MyPageActivity" android:exported="true"/>

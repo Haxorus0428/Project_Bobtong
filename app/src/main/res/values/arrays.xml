@@ -1,0 +1,13 @@
+<resources>
+    <string-array name="restaurant_categories">
+        <item>한식</item>
+        <item>중식</item>
+        <item>일식</item>
+    </string-array>
+    <string-array name="search_distances">
+        <item>1km</item>
+        <item>3km</item>
+        <item>5km</item>
+        <item>10km</item>
+    </string-array>
+</resources>
