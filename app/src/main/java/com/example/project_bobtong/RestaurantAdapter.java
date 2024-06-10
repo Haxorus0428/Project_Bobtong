@@ -8,11 +8,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.ViewHolder> {
 
     private List<Restaurant> mRestaurants;
+    private List<Restaurant> restaurantList = new ArrayList<>();
+
     public void setRestaurants(List<Restaurant> restaurants) {
         this.mRestaurants = restaurants;
         notifyDataSetChanged();
