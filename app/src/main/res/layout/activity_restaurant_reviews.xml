@@ -11,11 +11,24 @@
         android:layout_height="wrap_content"
         android:text="뒤로 가기" />
 
+    <EditText
+        android:id="@+id/editTextReview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="리뷰를 작성하세요" />
+
+    <Button
+        android:id="@+id/buttonSubmitReview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="제출"
+        android:layout_marginTop="16dp" />
+
     <TextView
         android:id="@+id/no_reviews_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="리뷰가 없습니다"
+        android:text="작성된 리뷰가 없습니다"
         android:visibility="gone"
         android:gravity="center"
         android:layout_marginTop="20dp" />

@@ -56,6 +56,8 @@ dependencies {
     // Firebase Analytics
     implementation("com.google.firebase:firebase-analytics")
 
+    implementation ("com.google.maps.android:android-maps-utils:2.2.5")
+
     // 사용자 편의성 증가용 슬라이드 업 패널
     implementation("com.sothree.slidinguppanel:library:3.4.0")
 

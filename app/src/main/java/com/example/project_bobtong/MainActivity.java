@@ -79,7 +79,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Button buttonSearch;
 
     private SlidingUpPanelLayout slidingLayout;
-    private List<Marker> markerList = new ArrayList<>(); // 마커 리스트
+    private List<Marker> searchMarkerList = new ArrayList<>(); // 검색된 마커 리스트
+    private List<Marker> bookmarkMarkerList = new ArrayList<>(); // 북마크된 마커 리스트
     private PathOverlay pathOverlay;
     private CircleOverlay circleOverlay;
 
@@ -204,8 +205,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // 지도 클릭 리스너 설정
         naverMap.setOnMapClickListener((point, coord) -> {
+            clearSearchMarkers(); // 검색된 마커 제거
             if (pathOverlay != null) {
-                pathOverlay.setMap(null);
+                pathOverlay.setMap(null); // 경로 오버레이 제거
             }
         });
 
@@ -221,49 +223,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     });
         }
 
-        // Firebase에서 데이터를 불러와 마커 추가
-        mDatabase.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                clearMarkers(); // 기존 마커 제거
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    Restaurant restaurant = dataSnapshot.getValue(Restaurant.class);
-                    if (restaurant != null) {
-                        Log.d("RestaurantData", "Name: " + restaurant.getTitle() + " Lat: " + restaurant.getLatitude() + " Lng: " + restaurant.getLongitude());
-                        // 위도와 경도로 변환
-                        double latitude = restaurant.getLatitude() / 10.0;
-                        double longitude = restaurant.getLongitude() / 10.0;
-                        LatLng latLng = new LatLng(latitude, longitude);
-
-                        // 마커 설정
-                        Marker marker = new Marker();
-                        marker.setPosition(latLng);
-                        marker.setMap(mNaverMap);
-                        markerList.add(marker); // 마커 리스트에 추가
-
-                        // 마커 클릭 리스너 설정
-                        marker.setOnClickListener(overlay -> {
-                            showRestaurantInfo(restaurant);
-                            moveCameraToMarker(marker);
-                            showDistanceAndPathToMarker(marker);
-                            return true;
-                        });
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("Firebase", "Failed to load restaurants", error.toException());
-            }
-        });
+        // Firebase에서 데이터를 불러와 북마크된 마커 추가
+        addBookmarkMarkers();
     }
 
-    private void clearMarkers() {
-        for (Marker marker : markerList) {
+    private void clearSearchMarkers() {
+        for (Marker marker : searchMarkerList) {
             marker.setMap(null);
         }
-        markerList.clear();
+        searchMarkerList.clear();
     }
 
     private void searchRestaurants(String query) {
@@ -300,6 +268,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 }
                             });
                         }
+
+                        // 지도에 마커 추가
+                        addMarkerForRestaurant(restaurant, false); // 검색된 마커는 북마크 아님
                     }
 
                     // RecyclerView에 검색 결과 표시
@@ -334,24 +305,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mDatabase.orderByChild("category").equalTo(category).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                clearMarkers(); // 기존 마커 제거
+                clearSearchMarkers(); // 기존 마커 제거
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Restaurant restaurant = dataSnapshot.getValue(Restaurant.class);
                     if (restaurant != null) {
-                        double latitude = restaurant.getLatitude() / 10.0;
-                        double longitude = restaurant.getLongitude() / 10.0;
-                        LatLng latLng = new LatLng(latitude, longitude);
-
-                        Marker marker = new Marker();
-                        marker.setPosition(latLng);
-                        marker.setMap(mNaverMap);
-                        markerList.add(marker); // 마커 리스트에 추가
-                        marker.setOnClickListener(overlay -> {
-                            showRestaurantInfo(restaurant);
-                            moveCameraToMarker(marker);
-                            showDistanceAndPathToMarker(marker);
-                            return true;
-                        });
+                        addMarkerForRestaurant(restaurant, false); // 검색된 마커는 북마크 아님
                     }
                 }
             }
@@ -359,6 +317,52 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e("Firebase", "Failed to load restaurants", error.toException());
+            }
+        });
+    }
+
+    private void addMarkerForRestaurant(Restaurant restaurant, boolean isBookmark) {
+        double latitude = restaurant.getLatitude() / 10.0;
+        double longitude = restaurant.getLongitude() / 10.0;
+        LatLng latLng = new LatLng(latitude, longitude);
+
+        Marker marker = new Marker();
+        marker.setPosition(latLng);
+        marker.setMap(mNaverMap);
+
+        if (isBookmark) {
+            bookmarkMarkerList.add(marker);
+        } else {
+            searchMarkerList.add(marker);
+        }
+
+        marker.setOnClickListener(overlay -> {
+            showRestaurantInfo(restaurant);
+            moveCameraToMarker(marker);
+            showDistanceAndPathToMarker(marker);
+            return true;
+        });
+    }
+
+    private void addBookmarkMarkers() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) return;
+
+        DatabaseReference bookmarkRef = FirebaseDatabase.getInstance().getReference("bookmarks").child(user.getUid());
+        bookmarkRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Restaurant restaurant = dataSnapshot.getValue(Restaurant.class);
+                    if (restaurant != null) {
+                        addMarkerForRestaurant(restaurant, true); // 북마크된 마커 추가
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Firebase", "Failed to load bookmarks", error.toException());
             }
         });
     }
@@ -392,9 +396,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         if (snapshot.exists()) {
                             bookmarkRef.removeValue();
                             Toast.makeText(MainActivity.this, "북마크가 삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                            removeBookmarkMarker(restaurant.getId()); // 북마크 삭제 시 마커 제거
                         } else {
                             bookmarkRef.setValue(restaurant);
                             Toast.makeText(MainActivity.this, "북마크가 추가되었습니다.", Toast.LENGTH_SHORT).show();
+                            addMarkerForRestaurant(restaurant, true); // 북마크 추가 시 마커 추가
                         }
                     }
 
@@ -417,6 +423,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
         dialog.show();
+    }
+
+    private void removeBookmarkMarker(String restaurantId) {
+        for (Marker marker : bookmarkMarkerList) {
+            if (marker.getTag() != null && marker.getTag().equals(restaurantId)) {
+                marker.setMap(null);
+                bookmarkMarkerList.remove(marker);
+                break;
+            }
+        }
     }
 
     private void moveCameraToMarker(Marker marker) {
