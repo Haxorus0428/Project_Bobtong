@@ -14,4 +14,4 @@
 .cxx
 local.properties
 # Exclude gradle.properties to keep API keys and sensitive information out of version control
-gradle.properties
+.gradle.properties
