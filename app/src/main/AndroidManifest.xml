@@ -35,10 +35,6 @@
         <activity android:name=".WriteReviewActivity" android:exported="true"/>
         <activity android:name=".MyReviewsActivity" android:exported="true"/>
 
-        <meta-data
-            android:name="com.naver.maps.map.CLIENT_ID"
-            android:value="REDACTED" />
-
     </application>
 
 </manifest>

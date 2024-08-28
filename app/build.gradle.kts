@@ -16,6 +16,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        // BuildConfig에 네이버 검색 API 클라이언트 ID 및 시크릿 추가
+        buildConfigField("String", "NAVER_MAPS_CLIENT_ID", "\"${project.findProperty("NAVER_MAPS_CLIENT_ID")}\"")
+        buildConfigField("String", "NAVER_SEARCH_CLIENT_ID", "\"${project.findProperty("NAVER_SEARCH_CLIENT_ID")}\"")
+        buildConfigField("String", "NAVER_SEARCH_CLIENT_SECRET", "\"${project.findProperty("NAVER_SEARCH_CLIENT_SECRET")}\"")
+        buildConfigField("String", "GOOGLE_MAPS_API_KEY", "\"${project.findProperty("GOOGLE_MAPS_API_KEY")}\"")
     }
 
     buildTypes {
@@ -24,6 +29,12 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
+    
+    // 이 부분을 추가하여 BuildConfig 기능을 활성화합니다.
+    buildFeatures {
+        buildConfig = true
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -55,7 +66,7 @@ dependencies {
 
     // Firebase Analytics
     implementation("com.google.firebase:firebase-analytics")
-
+    // Google Map
     implementation ("com.google.maps.android:android-maps-utils:2.2.5")
 
     // 사용자 편의성 증가용 슬라이드 업 패널

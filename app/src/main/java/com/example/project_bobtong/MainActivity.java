@@ -9,7 +9,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -42,6 +41,7 @@ import com.naver.maps.map.CameraUpdate;
 import com.naver.maps.map.LocationTrackingMode;
 import com.naver.maps.map.MapFragment;
 import com.naver.maps.map.NaverMap;
+import com.naver.maps.map.NaverMapSdk;
 import com.naver.maps.map.OnMapReadyCallback;
 import com.naver.maps.map.overlay.CircleOverlay;
 import com.naver.maps.map.overlay.Marker;
@@ -61,8 +61,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final int PERMISSION_REQUEST_CODE = 100;
-    private static final String SEARCH_CLIENT_ID = "REDACTED"; // 네이버 검색 API 클라이언트 ID
-    private static final String SEARCH_CLIENT_SECRET = "REDACTED"; // 네이버 검색 API 클라이언트 시크릿
+    private static final String SEARCH_CLIENT_ID = BuildConfig.NAVER_SEARCH_CLIENT_ID;
+    private static final String SEARCH_CLIENT_SECRET = BuildConfig.NAVER_SEARCH_CLIENT_SECRET;
+    private static final String GOOGLE_MAPS_API_KEY = BuildConfig.GOOGLE_MAPS_API_KEY;
 
     private FusedLocationProviderClient mFusedLocationClient;
     private NaverMap mNaverMap;
@@ -88,6 +89,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // BuildConfig를 사용하여 네이버 맵 클라이언트 ID 설정
+        NaverMapSdk.getInstance(this).setClient(new NaverMapSdk.NaverCloudPlatformClient(BuildConfig.NAVER_MAPS_CLIENT_ID));
 
         // Firebase 초기화
         FirebaseApp.initializeApp(this);
@@ -166,12 +170,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
             return false;
         });
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
     }
 
     @Override
@@ -455,7 +453,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .build();
 
         GoogleMapsApiService service = retrofit.create(GoogleMapsApiService.class);
-        Call<DirectionsResponse> call = service.getWalkingDirections(origin, destination, "transit", "REDACTED");
+        Call<DirectionsResponse> call = service.getWalkingDirections(origin, destination, "transit", GOOGLE_MAPS_API_KEY);
 
         call.enqueue(new Callback<DirectionsResponse>() {
             @Override

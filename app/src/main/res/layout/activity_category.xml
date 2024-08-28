@@ -38,4 +38,12 @@
         android:layout_height="wrap_content"
         android:text="메인 페이지로 돌아가기"
         android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/resetButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="초기화"
+        android:layout_marginTop="16dp" />
+
 </LinearLayout>
