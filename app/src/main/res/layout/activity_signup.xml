@@ -11,20 +11,20 @@
         android:id="@+id/editTextEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="이메일" />
+        android:hint="email" />
 
     <EditText
         android:id="@+id/editTextPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="비밀번호"
+        android:hint="暗証番号"
         android:inputType="textPassword" />
 
     <EditText
         android:id="@+id/editTextConfirmPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="비밀번호 확인"
+        android:hint="暗証番号確認"
         android:inputType="textPassword" />
 
     <Button

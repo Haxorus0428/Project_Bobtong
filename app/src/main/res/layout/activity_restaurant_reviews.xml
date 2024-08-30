@@ -9,26 +9,26 @@
         android:id="@+id/back_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="뒤로 가기" />
+        android:text="戻る" />
 
     <EditText
         android:id="@+id/editTextReview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="리뷰를 작성하세요" />
+        android:hint="レビューを作成してください。" />
 
     <Button
         android:id="@+id/buttonSubmitReview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="제출"
+        android:text="提出"
         android:layout_marginTop="16dp" />
 
     <TextView
         android:id="@+id/no_reviews_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="작성된 리뷰가 없습니다"
+        android:text="作成したレビューがありません"
         android:visibility="gone"
         android:gravity="center"
         android:layout_marginTop="20dp" />

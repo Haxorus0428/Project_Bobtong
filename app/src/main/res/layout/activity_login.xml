@@ -9,30 +9,30 @@
         android:id="@+id/editTextEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="이메일" />
+        android:hint="email" />
 
     <EditText
         android:id="@+id/editTextPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="비밀번호"
+        android:hint="暗証番号"
         android:inputType="textPassword" />
 
     <Button
         android:id="@+id/buttonLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="로그인" />
+        android:text="ログイン" />
 
     <Button
         android:id="@+id/buttonSignup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="회원가입" />
+        android:text="会員登録" />
 
     <Button
         android:id="@+id/buttonBackToMain"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="메인 페이지로 돌아가기" />
+        android:text="メインページに戻る" />
 </LinearLayout>

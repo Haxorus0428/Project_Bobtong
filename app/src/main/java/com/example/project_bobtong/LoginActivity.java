@@ -41,12 +41,12 @@ public class LoginActivity extends AppCompatActivity {
             String password = editTextPassword.getText().toString().trim();
 
             if (TextUtils.isEmpty(email)) {
-                Toast.makeText(LoginActivity.this, "이메일을 입력하세요.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "emailをご入力してください。.", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             if (TextUtils.isEmpty(password)) {
-                Toast.makeText(LoginActivity.this, "비밀번호를 입력하세요.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "暗証番号をご入力してください。", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -59,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
                                 finish();
                             }
                         } else {
-                            Toast.makeText(LoginActivity.this, "로그인 실패.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, "ログイン失敗", Toast.LENGTH_SHORT).show();
                         }
                     });
         });

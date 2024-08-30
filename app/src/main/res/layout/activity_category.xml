@@ -8,7 +8,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="음식점 종류를 선택하세요" />
+        android:text="飲食店の種類を選択してください。" />
 
     <Spinner
         android:id="@+id/categorySpinner"
@@ -19,7 +19,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="검색 범위를 선택하세요" />
+        android:text="検索範囲を選択してください" />
 
     <Spinner
         android:id="@+id/distanceSpinner"
@@ -31,19 +31,19 @@
         android:id="@+id/searchButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="검색" />
+        android:text="検索" />
     <Button
         android:id="@+id/back_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="메인 페이지로 돌아가기"
+        android:text="メインページに戻る"
         android:layout_marginTop="16dp" />
 
     <Button
         android:id="@+id/resetButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="초기화"
+        android:text="初期化"
         android:layout_marginTop="16dp" />
 
 </LinearLayout>

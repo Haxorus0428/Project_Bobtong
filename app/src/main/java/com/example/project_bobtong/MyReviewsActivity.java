@@ -1,11 +1,11 @@
 package com.example.project_bobtong;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,7 +27,7 @@ public class MyReviewsActivity extends AppCompatActivity {
     private TextView noReviewsText;
     private List<String> reviewList;
     private ArrayAdapter<String> adapter;
-    private DatabaseReference userReviewsRef;
+    private DatabaseReference reviewsRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,16 +45,16 @@ public class MyReviewsActivity extends AppCompatActivity {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
-            userReviewsRef = FirebaseDatabase.getInstance().getReference("user_reviews").child(user.getUid());
-            loadUserReviews();
+            reviewsRef = FirebaseDatabase.getInstance().getReference("reviews").child(user.getUid());
+            loadReviews();
         } else {
-            noReviewsText.setText("로그인이 필요합니다.");
+            noReviewsText.setText("ログインが必要です。");
             noReviewsText.setVisibility(View.VISIBLE);
         }
     }
 
-    private void loadUserReviews() {
-        userReviewsRef.addValueEventListener(new ValueEventListener() {
+    private void loadReviews() {
+        reviewsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 reviewList.clear();
@@ -77,7 +77,7 @@ public class MyReviewsActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                noReviewsText.setText("리뷰를 불러오는 데 실패했습니다.");
+                noReviewsText.setText("レビューの読み込みに失敗しました。");
                 noReviewsText.setVisibility(View.VISIBLE);
             }
         });

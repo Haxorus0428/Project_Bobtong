@@ -44,22 +44,22 @@ public class SignupActivity extends AppCompatActivity {
             String confirmPassword = editTextConfirmPassword.getText().toString().trim();
 
             if (TextUtils.isEmpty(email)) {
-                editTextEmail.setError("이메일을 입력하세요.");
+                editTextEmail.setError("emailをご入力してください。");
                 return;
             }
 
             if (TextUtils.isEmpty(password)) {
-                editTextPassword.setError("비밀번호를 입력하세요.");
+                editTextPassword.setError("暗証番号をご入力してください。");
                 return;
             }
 
             if (!password.equals(confirmPassword)) {
-                editTextConfirmPassword.setError("비밀번호가 일치하지 않습니다.");
+                editTextConfirmPassword.setError("暗証番号が一致しません");
                 return;
             }
 
             if (password.length() < 6) {
-                editTextPassword.setError("비밀번호는 6자리 이상이어야 합니다.");
+                editTextPassword.setError("暗証番号は六文字以上ご入力してください。");
                 return;
             }
 
@@ -85,7 +85,7 @@ public class SignupActivity extends AppCompatActivity {
                                         });
                             }
                         } else {
-                            Toast.makeText(SignupActivity.this, "회원가입에 실패했습니다. 다시 시도하세요.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SignupActivity.this, "会員登録に失敗しました。", Toast.LENGTH_SHORT).show();
                         }
                     });
         });

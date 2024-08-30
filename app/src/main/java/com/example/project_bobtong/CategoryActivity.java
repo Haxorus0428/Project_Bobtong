@@ -2,7 +2,6 @@ package com.example.project_bobtong;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.Spinner;
 
@@ -24,10 +23,7 @@ public class CategoryActivity extends AppCompatActivity {
 
         searchButton.setOnClickListener(v -> {
             String category = categorySpinner.getSelectedItem().toString();
-            String distanceStr = distanceSpinner.getSelectedItem().toString();
-            double distance = Double.parseDouble(distanceStr.replaceAll("[^\\d.]", "")); // 숫자와 소수점만 추출하여 변환
-
-            Log.d("CategoryDistance", "Category: " + category + ", Distance: " + distance);
+            String distance = distanceSpinner.getSelectedItem().toString();
 
             Intent resultIntent = new Intent();
             resultIntent.putExtra("category", category);

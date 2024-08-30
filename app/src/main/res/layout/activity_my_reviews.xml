@@ -9,13 +9,13 @@
         android:id="@+id/back_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="뒤로 가기" />
+        android:text="戻る" />
 
     <TextView
         android:id="@+id/no_reviews_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="작성된 리뷰가 없습니다"
+        android:text="作成されたリビューがありません。"
         android:visibility="gone"
         android:gravity="center"
         android:layout_marginTop="20dp" />

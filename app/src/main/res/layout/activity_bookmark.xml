@@ -9,7 +9,7 @@
         android:id="@+id/no_bookmarks_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="저장된 음식점이 없습니다"
+        android:text="保存されたブックマークがありません。"
         android:visibility="gone"
         android:textSize="16sp"
         android:layout_gravity="center"
@@ -26,6 +26,6 @@
         android:id="@+id/back_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="메인 페이지로 돌아가기"
+        android:text="メインページに戻る"
         android:layout_gravity="center"/>
 </LinearLayout>

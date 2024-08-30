@@ -45,6 +45,7 @@ import com.naver.maps.map.NaverMapSdk;
 import com.naver.maps.map.OnMapReadyCallback;
 import com.naver.maps.map.overlay.CircleOverlay;
 import com.naver.maps.map.overlay.Marker;
+import com.naver.maps.map.overlay.OverlayImage;
 import com.naver.maps.map.overlay.PathOverlay;
 import com.naver.maps.map.util.FusedLocationSource;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
@@ -70,6 +71,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private FusedLocationSource mLocationSource;
     private Location mCurrentLocation;
 
+    // Location 객체를 LatLng로 변환하는 메소드
+    private LatLng convertToLatLng(DirectionsResponse.Step.Location location) {return new LatLng(location.lat, location.lng);}
+
     private RecyclerView mRecyclerView;
     private RestaurantAdapter mAdapter;
     private DatabaseReference mDatabase;
@@ -82,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private SlidingUpPanelLayout slidingLayout;
     private List<Marker> searchMarkerList = new ArrayList<>(); // 검색된 마커 리스트
     private List<Marker> bookmarkMarkerList = new ArrayList<>(); // 북마크된 마커 리스트
+    private List<Marker> transitMarkers = new ArrayList<>(); // 교통수단 변경 마커 리스트
     private PathOverlay pathOverlay;
     private CircleOverlay circleOverlay;
 
@@ -145,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 // 검색 실행
                 searchRestaurants(query);
             } else {
-                Toast.makeText(MainActivity.this, "검색어를 입력하세요", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "キーワード検索", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -153,10 +158,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
-            if (itemId == R.id.action_category) {
+            /*if (itemId == R.id.action_category) {
                 showCategoryDialog();
                 return true;
-            } else if (itemId == R.id.action_bookmark) {
+            } else */ if (itemId == R.id.action_bookmark) {
                 startActivity(new Intent(this, BookmarkActivity.class));
                 return true;
             } else if (itemId == R.id.action_mypage) {
@@ -175,10 +180,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_category) {
+        /*if (id == R.id.action_category) {
             showCategoryDialog();
             return true;
-        } else if (id == R.id.action_bookmark) {
+        } else*/ if (id == R.id.action_bookmark) {
             startActivity(new Intent(this, BookmarkActivity.class));
             return true;
         } else if (id == R.id.action_mypage) {
@@ -230,6 +235,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             marker.setMap(null);
         }
         searchMarkerList.clear();
+
+        // 이동수단 마커 제거
+        for (Marker marker : transitMarkers) {
+            marker.setMap(null);
+        }
+        transitMarkers.clear();
     }
 
     private void searchRestaurants(String query) {
@@ -276,23 +287,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     slidingLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
                 } else {
                     Log.e("API Error", response.errorBody().toString());
-                    Toast.makeText(MainActivity.this, "검색에 실패했습니다", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "検索に失敗しました。", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<SearchResponse> call, @NonNull Throwable t) {
                 Log.e("API Error", "Error fetching data", t);
-                Toast.makeText(MainActivity.this, "검색 중 오류가 발생했습니다", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "検索中エラーが発生しました", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void showCategoryDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("카테고리 선택");
-        builder.setItems(new String[]{"한식", "중식", "일식"}, (dialog, which) -> {
-            String category = which == 0 ? "한식" : which == 1 ? "중식" : "일식";
+        builder.setTitle("カテゴリー選択");
+        builder.setItems(new String[]{"韓国料理", "中華料理", "和食"}, (dialog, which) -> {
+            String category = which == 0 ? "韓国料理" : which == 1 ? "中華料理" : "和食";
             filterRestaurantsByCategory(category);
         });
         builder.show();
@@ -393,11 +404,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()) {
                             bookmarkRef.removeValue();
-                            Toast.makeText(MainActivity.this, "북마크가 삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "ブックマークが削除されました。", Toast.LENGTH_SHORT).show();
                             removeBookmarkMarker(restaurant.getId()); // 북마크 삭제 시 마커 제거
                         } else {
                             bookmarkRef.setValue(restaurant);
-                            Toast.makeText(MainActivity.this, "북마크가 추가되었습니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "ブックマークが追加されました。", Toast.LENGTH_SHORT).show();
                             addMarkerForRestaurant(restaurant, true); // 북마크 추가 시 마커 추가
                         }
                     }
@@ -408,7 +419,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 });
             } else {
-                Toast.makeText(MainActivity.this, "로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "ログインが必要です。", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -463,50 +474,127 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Log.d("API Response", new Gson().toJson(directionsResponse));
 
                     if (directionsResponse.routes != null && !directionsResponse.routes.isEmpty()) {
-                        List<LatLng> path = PolyUtil.decode(directionsResponse.routes.get(0).overview_polyline.points);
+                        DirectionsResponse.Route route = directionsResponse.routes.get(0);
+                        DirectionsResponse.Leg leg = route.legs.get(0);
+                        List<DirectionsResponse.Step> steps = leg.steps;
+
+                        StringBuilder transitInfo = new StringBuilder();
+
+                        for (DirectionsResponse.Step step : steps) {
+                            String travelMode = step.travel_mode;
+
+                            if ("TRANSIT".equals(travelMode)) {
+                                DirectionsResponse.Step.TransitDetails transitDetails = step.transit_details;
+                                String vehicleType = transitDetails.line.vehicle.type;
+                                String lineName = transitDetails.line.short_name;
+                                String departureStop = transitDetails.departure_stop.name;
+                                String arrivalStop = transitDetails.arrival_stop.name;
+                                String duration = step.duration.text;
+
+                                transitInfo.append(String.format("移動手段: %s (%s)\n出発: %s\n到着: %s\n所要時間: %s\n\n",
+                                        vehicleType, lineName, departureStop, arrivalStop, duration));
+                            } else if ("WALKING".equals(travelMode)) {
+                                String walkDuration = step.duration.text;
+                                transitInfo.append(String.format("徒歩移動: %s\n\n", walkDuration));
+                            }
+                        }
+
+                        // 경로를 지도에 표시하기
+                        List<LatLng> path = PolyUtil.decode(route.overview_polyline.points);
 
                         // 기존 오버레이 제거
                         if (pathOverlay != null) {
                             pathOverlay.setMap(null);
                         }
 
-                        // 거리 및 예상 시간 계산
-                        double totalDistance = directionsResponse.routes.get(0).legs.get(0).distance.value / 1000.0; // km로 변환
-                        double totalDuration = directionsResponse.routes.get(0).legs.get(0).duration.value / 3600.0; // 시간으로 변환
-
-                        if (totalDuration > 1) {
-                            Toast.makeText(MainActivity.this, "너무 멀어요!", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-
-                        String distanceText = totalDistance < 1 ? String.format("%dm", (int) (totalDistance * 1000))
-                                : String.format("%.0fkm", totalDistance);
-
-                        Toast.makeText(MainActivity.this, "거리: " + distanceText, Toast.LENGTH_SHORT).show();
-
-                        // 경로 표시
                         pathOverlay = new PathOverlay();
                         pathOverlay.setCoords(path);
-                        pathOverlay.setWidth(12); // 흰색 선 두께 조절
-                        pathOverlay.setColor(Color.WHITE); // 흰색 바탕
+                        pathOverlay.setWidth(15); // 경로 선 두께 조절
+                        pathOverlay.setColor(Color.parseColor("#00FFFF"));
                         pathOverlay.setMap(mNaverMap);
 
+                        // 교통수단 변경 지점 마커 추가
+                        for (DirectionsResponse.Step step : steps) {
+                            String travelMode = step.travel_mode.toLowerCase();
+                            LatLng changeLatLng = convertToLatLng(step.start_location);  // Location을 LatLng로 변환
+
+                            Marker transportMarker = new Marker();
+                            transportMarker.setPosition(changeLatLng);
+
+                            // 이동 수단에 따라 아이콘 설정
+                            switch (travelMode.toLowerCase()) {
+                                case "walking":
+                                    transportMarker.setIcon(OverlayImage.fromResource(R.drawable.ic_walk));
+                                    break;
+                                case "transit":
+                                    if (step.transit_details != null) {
+                                        String vehicleType = step.transit_details.line.vehicle.type.toLowerCase();
+                                        if (vehicleType.contains("subway")) {
+                                            transportMarker.setIcon(OverlayImage.fromResource(R.drawable.ic_subway));
+                                        } else if (vehicleType.contains("bus")) {
+                                            transportMarker.setIcon(OverlayImage.fromResource(R.drawable.ic_bus));
+                                        }
+                                    }
+                                    break;
+                            }
+
+                            // 이동수단 마커 설정 및 반응형 사이즈 조절
+                            transportMarker.setMap(mNaverMap);
+                            transitMarkers.add(transportMarker); // 마커 리스트에 추가
+
+                            // 이동 수단 마커를 지도에 추가하는 코드 내 수정 부분
+                            mNaverMap.addOnCameraChangeListener((reason, animated) -> {
+                                double zoom = mNaverMap.getCameraPosition().zoom;
+
+                                // 새로운 아이콘 크기 조절 공식 - 축소 상태에서 크기를 키우고 확대 시 너무 작아지지 않도록 조정
+                                int size = (int) (60 * Math.pow(0.9, (15 - zoom) / 2.0)); // 확대 시 더 크게, 축소 시 적당히 보이도록 설정
+
+                                // 아이콘 크기 설정
+                                transportMarker.setWidth(Math.max(size, 180));  // 최소 크기를 40으로 설정하여 너무 작아지지 않게
+                                transportMarker.setHeight(Math.max(size, 180));
+                            });
+
+                            transportMarker.setMap(mNaverMap);
+                            transitMarkers.add(transportMarker); // 마커 리스트에 추가
+                        }
+
+                        // 전체 소요 시간과 거리 정보
+                        double totalDistance = leg.distance.value / 1000.0; // km로 변환
+                        double totalDuration = leg.duration.value / 3600.0; // 시간으로 변환
+
+                        // 거리와 소요 시간 출력
+                        if (totalDuration > 2) {
+                            Toast.makeText(MainActivity.this, "遠すぎます!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            String distanceText = totalDistance < 1 ? String.format("%dm", (int) (totalDistance * 1000))
+                                    : String.format("%.1fkm", totalDistance);
+                            showTransitInfoDialog(transitInfo.toString(), distanceText, leg.duration.text);
+                        }
+
                     } else {
-                        Log.e("API Error", "No routes found in response: " + new Gson().toJson(directionsResponse));
-                        Toast.makeText(MainActivity.this, "경로를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
+                        Log.e("API Error", "No routes found in response");
+                        Toast.makeText(MainActivity.this, "経路を見つかりませんでした。", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Log.e("API Error", "Response Code: " + response.code() + ", Message: " + response.message());
-                    Toast.makeText(MainActivity.this, "경로를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "経路を見つかりませんでした。", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<DirectionsResponse> call, Throwable t) {
                 Log.e("API Failure", t.getMessage(), t);
-                Toast.makeText(MainActivity.this, "경로 찾기 실패: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "経路探索失敗" + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    // 경로 안내 정보를 다이얼로그로 표시하는 메소드
+    private void showTransitInfoDialog(String transitInfo, String distanceText, String durationText) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("経路情報");
+        builder.setMessage("距離: " + distanceText + "\n所要時間: " + durationText + "\n\n" + transitInfo);
+        builder.setPositiveButton("確認", (dialog, which) -> dialog.dismiss());
+        builder.show();
     }
 
     private void showCurrentLocationCircle() {
@@ -516,11 +604,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         LatLng currentLatLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
 
-        circleOverlay = new CircleOverlay();
+        /*circleOverlay = new CircleOverlay();
         circleOverlay.setCenter(currentLatLng);
         circleOverlay.setRadius(1000);
         circleOverlay.setColor(Color.parseColor("#220000FF")); // 반투명한 파란색
-        circleOverlay.setMap(mNaverMap);
+        circleOverlay.setMap(mNaverMap);*/
     }
 
     @Override

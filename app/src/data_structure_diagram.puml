@@ -1,0 +1,52 @@
+@startuml
+entity "Users" as Users {
+    * userId : String
+    --
+    email : String
+    handle : String
+}
+
+entity "Bookmarks" as Bookmarks {
+    * id : String
+    --
+    userId : String
+    address : String
+    category : String
+    latitude : Float
+    longitude : Float
+    mapx : Int
+    mapy : Int
+    title : String
+}
+
+entity "Restaurant_Reviews" as Restaurant_Reviews {
+    * reviewId : String
+    --
+    restaurantId : String
+    reviewText : String
+    userId : String
+}
+
+entity "Restaurants" as Restaurants {
+    * id : String
+    --
+    address : String
+    category : String
+    latitude : Float
+    longitude : Float
+    mapx : Int
+    mapy : Int
+    title : String
+}
+
+entity "User_Reviews" as User_Reviews {
+    * userId : String
+    --
+    review : String
+}
+
+Users ||--o{ Bookmarks : "has"
+Users ||--o{ User_Reviews : "has"
+Restaurants ||--o{ Restaurant_Reviews : "has"
+Users ||--o{ Restaurant_Reviews : "writes"
+@enduml

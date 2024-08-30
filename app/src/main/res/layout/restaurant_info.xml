@@ -18,10 +18,10 @@
 
             <TextView
                 android:id="@+id/foodTitle"
-                android:layout_width="200px"
+                android:layout_width="230px"
                 android:layout_height="60dp"
                 android:gravity="center"
-                android:text="음식점 이름: "
+                android:text="店舗名："
                 android:textSize="14dp" />
 
             <TextView
@@ -29,7 +29,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="60dp"
                 android:gravity="center"
-                android:hint="등록되지 않은 음식점입니다"
+                android:hint="登録されてない飲食店です。"
                 android:textSize="14dp" />
         </LinearLayout>
 
@@ -44,10 +44,10 @@
 
             <TextView
                 android:id="@+id/foodAddress"
-                android:layout_width="200px"
+                android:layout_width="230px"
                 android:layout_height="60dp"
                 android:gravity="center"
-                android:text="주소: "
+                android:text="住所："
                 android:textSize="14dp" />
 
             <TextView
@@ -55,7 +55,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:gravity="center"
-                android:hint="등록되지 않은 음식점입니다"
+                android:hint="登録されてない飲食店です。"
                 android:textSize="14dp" />
         </LinearLayout>
 
@@ -71,10 +71,10 @@
 
             <TextView
                 android:id="@+id/foodCategory"
-                android:layout_width="200px"
+                android:layout_width="230px"
                 android:layout_height="40dp"
                 android:gravity="center"
-                android:text="카테고리: "
+                android:text="カテゴリー："
                 android:textSize="14dp" />
 
             <TextView
@@ -82,7 +82,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:gravity="center"
-                android:hint="등록되지 않은 음식점입니다"
+                android:hint="登録されてない飲食店です。"
                 android:textSize="14dp" />
         </LinearLayout>
 
@@ -95,13 +95,13 @@
                 android:id="@+id/buttonBookmark"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="북마크 추가/삭제" />
+                android:text="ブックマーク追加／除去" />
 
             <Button
                 android:id="@+id/buttonViewReviews"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="리뷰 보기" />
+                android:text="レビューを見る" />
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>
