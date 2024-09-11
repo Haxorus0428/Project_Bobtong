@@ -56,7 +56,7 @@ public class RestaurantReviewsActivity extends AppCompatActivity {
 
             buttonSubmitReview.setOnClickListener(v -> submitReview(restaurantId));
         } else {
-            noReviewsText.setText("飲食店の情報がありません。");
+            noReviewsText.setText("음식점 정보가 없습니다.");
             noReviewsText.setVisibility(View.VISIBLE);
         }
     }
@@ -85,7 +85,7 @@ public class RestaurantReviewsActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                noReviewsText.setText("レビューの読み込みに失敗しました。");
+                noReviewsText.setText("리뷰 불러오기를 실패했습니다.");
                 noReviewsText.setVisibility(View.VISIBLE);
             }
         });
@@ -106,10 +106,10 @@ public class RestaurantReviewsActivity extends AppCompatActivity {
                 DatabaseReference userReviewRef = FirebaseDatabase.getInstance().getReference("user_reviews").child(userId).child(newReviewRef.getKey());
                 userReviewRef.setValue(reviewText);
             } else {
-                Toast.makeText(this, "レビューをご入力してください。", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "리뷰를 입력해주세요", Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(this, "ログインが必要です。", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
         }
     }
 }

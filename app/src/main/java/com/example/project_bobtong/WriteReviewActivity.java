@@ -33,7 +33,7 @@ public class WriteReviewActivity extends AppCompatActivity {
             if (!review.isEmpty()) {
                 submitReview(restaurantId, review);
             } else {
-                Toast.makeText(WriteReviewActivity.this, "レビューをご入力してください。", Toast.LENGTH_SHORT).show();
+                Toast.makeText(WriteReviewActivity.this, "리뷰를 입력해주세요", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -45,10 +45,10 @@ public class WriteReviewActivity extends AppCompatActivity {
             Review newReview = new Review(userId, restaurantId, review);
             mDatabase.child(restaurantId).child(key).setValue(newReview).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    Toast.makeText(WriteReviewActivity.this, "レビューが提出されました。", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(WriteReviewActivity.this, "리뷰가 제출되었습니다.", Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
-                    Toast.makeText(WriteReviewActivity.this, "レビューの提出に失敗しました。", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(WriteReviewActivity.this, "리뷰 제출에 실패했습니다.", Toast.LENGTH_SHORT).show();
                 }
             });
         }

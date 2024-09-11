@@ -49,7 +49,7 @@ public class BookmarkActivity extends AppCompatActivity {
             bookmarkRef = FirebaseDatabase.getInstance().getReference("bookmarks").child(user.getUid());
             loadBookmarks(bookmarkTitles);
         } else {
-            Toast.makeText(this, "ログインが必要です。", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
             finish();
         }
 
@@ -63,7 +63,7 @@ public class BookmarkActivity extends AppCompatActivity {
                 setResult(RESULT_OK, resultIntent);
                 finish();
             } else {
-                Toast.makeText(BookmarkActivity.this, "飲食店を読み込めませんでした。", Toast.LENGTH_SHORT).show();
+                Toast.makeText(BookmarkActivity.this, "음식점을 불러 올 수 없습니다.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -99,7 +99,7 @@ public class BookmarkActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e("Firebase", "Failed to load bookmarks", error.toException());
-                noBookmarksText.setText("ブックマークの読み込みに失敗しました。");
+                noBookmarksText.setText("북마크 불러오기에 실패했습니다.");
                 noBookmarksText.setVisibility(View.VISIBLE);
             }
         });

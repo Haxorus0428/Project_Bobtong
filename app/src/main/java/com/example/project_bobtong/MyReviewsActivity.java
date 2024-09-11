@@ -48,7 +48,7 @@ public class MyReviewsActivity extends AppCompatActivity {
             reviewsRef = FirebaseDatabase.getInstance().getReference("reviews").child(user.getUid());
             loadReviews();
         } else {
-            noReviewsText.setText("ログインが必要です。");
+            noReviewsText.setText("로그인이 필요합니다.");
             noReviewsText.setVisibility(View.VISIBLE);
         }
     }
@@ -77,7 +77,7 @@ public class MyReviewsActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                noReviewsText.setText("レビューの読み込みに失敗しました。");
+                noReviewsText.setText("리뷰 불러오기를 실패했습니다.");
                 noReviewsText.setVisibility(View.VISIBLE);
             }
         });

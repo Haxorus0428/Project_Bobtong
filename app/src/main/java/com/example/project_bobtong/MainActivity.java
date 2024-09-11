@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 // 검색 실행
                 searchRestaurants(query);
             } else {
-                Toast.makeText(MainActivity.this, "キーワード検索", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "검색어 입력", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -158,10 +158,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
-            /*if (itemId == R.id.action_category) {
+            if (itemId == R.id.action_category) {
                 showCategoryDialog();
                 return true;
-            } else */ if (itemId == R.id.action_bookmark) {
+            } else if (itemId == R.id.action_bookmark) {
                 startActivity(new Intent(this, BookmarkActivity.class));
                 return true;
             } else if (itemId == R.id.action_mypage) {
@@ -180,10 +180,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        /*if (id == R.id.action_category) {
+        if (id == R.id.action_category) {
             showCategoryDialog();
             return true;
-        } else*/ if (id == R.id.action_bookmark) {
+        } else if (id == R.id.action_bookmark) {
             startActivity(new Intent(this, BookmarkActivity.class));
             return true;
         } else if (id == R.id.action_mypage) {
@@ -287,23 +287,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     slidingLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
                 } else {
                     Log.e("API Error", response.errorBody().toString());
-                    Toast.makeText(MainActivity.this, "検索に失敗しました。", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "검색에 실패했습니다.", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<SearchResponse> call, @NonNull Throwable t) {
                 Log.e("API Error", "Error fetching data", t);
-                Toast.makeText(MainActivity.this, "検索中エラーが発生しました", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "검색중 에러가 발생했습니다.", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void showCategoryDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("カテゴリー選択");
-        builder.setItems(new String[]{"韓国料理", "中華料理", "和食"}, (dialog, which) -> {
-            String category = which == 0 ? "韓国料理" : which == 1 ? "中華料理" : "和食";
+        builder.setTitle("카테고리 선택");
+        builder.setItems(new String[]{"한식", "중식", "일식"}, (dialog, which) -> {
+            String category = which == 0 ? "한식" : which == 1 ? "중식" : "일식";
             filterRestaurantsByCategory(category);
         });
         builder.show();
@@ -404,11 +404,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()) {
                             bookmarkRef.removeValue();
-                            Toast.makeText(MainActivity.this, "ブックマークが削除されました。", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "북마크가 제거되었습니다.", Toast.LENGTH_SHORT).show();
                             removeBookmarkMarker(restaurant.getId()); // 북마크 삭제 시 마커 제거
                         } else {
                             bookmarkRef.setValue(restaurant);
-                            Toast.makeText(MainActivity.this, "ブックマークが追加されました。", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "북마크가 추가되었습니다.", Toast.LENGTH_SHORT).show();
                             addMarkerForRestaurant(restaurant, true); // 북마크 추가 시 마커 추가
                         }
                     }
@@ -419,7 +419,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 });
             } else {
-                Toast.makeText(MainActivity.this, "ログインが必要です。", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -491,11 +491,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 String arrivalStop = transitDetails.arrival_stop.name;
                                 String duration = step.duration.text;
 
-                                transitInfo.append(String.format("移動手段: %s (%s)\n出発: %s\n到着: %s\n所要時間: %s\n\n",
+                                transitInfo.append(String.format("이동수단: %s (%s)\n출발: %s\n도착: %s\n소요시간: %s\n\n",
                                         vehicleType, lineName, departureStop, arrivalStop, duration));
                             } else if ("WALKING".equals(travelMode)) {
                                 String walkDuration = step.duration.text;
-                                transitInfo.append(String.format("徒歩移動: %s\n\n", walkDuration));
+                                transitInfo.append(String.format("도보이동: %s\n\n", walkDuration));
                             }
                         }
 
@@ -550,8 +550,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 int size = (int) (60 * Math.pow(0.9, (15 - zoom) / 2.0)); // 확대 시 더 크게, 축소 시 적당히 보이도록 설정
 
                                 // 아이콘 크기 설정
-                                transportMarker.setWidth(Math.max(size, 180));  // 최소 크기를 40으로 설정하여 너무 작아지지 않게
-                                transportMarker.setHeight(Math.max(size, 180));
+                                transportMarker.setWidth(Math.max(size, 150));  // 최소 크기를 40으로 설정하여 너무 작아지지 않게
+                                transportMarker.setHeight(Math.max(size, 150));
                             });
 
                             transportMarker.setMap(mNaverMap);
@@ -562,9 +562,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         double totalDistance = leg.distance.value / 1000.0; // km로 변환
                         double totalDuration = leg.duration.value / 3600.0; // 시간으로 변환
 
-                        // 거리와 소요 시간 출력
+                        // 거리와 소요 시간 출력 (소요 시간 2시간 이상일 경우, 단순 경고)
                         if (totalDuration > 2) {
-                            Toast.makeText(MainActivity.this, "遠すぎます!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "너무멀어요!", Toast.LENGTH_SHORT).show();
                         } else {
                             String distanceText = totalDistance < 1 ? String.format("%dm", (int) (totalDistance * 1000))
                                     : String.format("%.1fkm", totalDistance);
@@ -573,27 +573,27 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     } else {
                         Log.e("API Error", "No routes found in response");
-                        Toast.makeText(MainActivity.this, "経路を見つかりませんでした。", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "경로를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Log.e("API Error", "Response Code: " + response.code() + ", Message: " + response.message());
-                    Toast.makeText(MainActivity.this, "経路を見つかりませんでした。", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "경로를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<DirectionsResponse> call, Throwable t) {
                 Log.e("API Failure", t.getMessage(), t);
-                Toast.makeText(MainActivity.this, "経路探索失敗" + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "경로탐색 실패" + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
     // 경로 안내 정보를 다이얼로그로 표시하는 메소드
     private void showTransitInfoDialog(String transitInfo, String distanceText, String durationText) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("経路情報");
-        builder.setMessage("距離: " + distanceText + "\n所要時間: " + durationText + "\n\n" + transitInfo);
-        builder.setPositiveButton("確認", (dialog, which) -> dialog.dismiss());
+        builder.setTitle("경로정보");
+        builder.setMessage("거리: " + distanceText + "\n소요시간: " + durationText + "\n\n" + transitInfo);
+        builder.setPositiveButton("확인", (dialog, which) -> dialog.dismiss());
         builder.show();
     }
 

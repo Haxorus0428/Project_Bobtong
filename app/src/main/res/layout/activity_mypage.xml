@@ -9,17 +9,17 @@
         android:id="@+id/buttonLogout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="ログアウト" />
+        android:text="로그아웃" />
 
     <Button
         android:id="@+id/buttonMainPage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="メインページに戻る" />
+        android:text="메인페이지로 돌아가기" />
 
     <Button
         android:id="@+id/buttonMyReviews"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="私のレビューを見る" />
+        android:text="내 리뷰 보기" />
 </LinearLayout>

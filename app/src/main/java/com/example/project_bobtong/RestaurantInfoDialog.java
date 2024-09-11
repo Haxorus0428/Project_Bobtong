@@ -56,20 +56,20 @@ public class RestaurantInfoDialog extends Dialog {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()) {
                             bookmarkRef.removeValue();
-                            Toast.makeText(context, "ブックマークが除去されました。", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "북마크가 제거되었습니다.", Toast.LENGTH_SHORT).show();
                         } else {
                             bookmarkRef.setValue(restaurant);
-                            Toast.makeText(context, "ブックマークが追加されました。", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "북마크가 추가되었습니다.", Toast.LENGTH_SHORT).show();
                         }
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(context, "ブックマークの除去／追加に失敗しました。", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "북마크의 제거/추가에 실패했습니다.", Toast.LENGTH_SHORT).show();
                     }
                 });
             } else {
-                Toast.makeText(context, "ログインが必要です。", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
             }
         });
 

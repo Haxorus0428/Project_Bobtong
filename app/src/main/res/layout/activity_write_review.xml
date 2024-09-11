@@ -9,12 +9,12 @@
         android:id="@+id/editTextReview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="レビューを作成してください。" />
+        android:hint="리뷰를 작성해주세요" />
 
     <Button
         android:id="@+id/buttonSubmitReview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="提出"
+        android:text="제출"
         android:layout_marginTop="16dp" />
 </LinearLayout>
