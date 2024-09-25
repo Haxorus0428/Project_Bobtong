@@ -5,14 +5,17 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,8 +53,11 @@ import com.naver.maps.map.overlay.PathOverlay;
 import com.naver.maps.map.util.FusedLocationSource;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -159,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.action_category) {
-                showCategoryDialog();
+                showCategoryDialogWithSpinner();
                 return true;
             } else if (itemId == R.id.action_bookmark) {
                 startActivity(new Intent(this, BookmarkActivity.class));
@@ -175,27 +181,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
             return false;
         });
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_category) {
-            showCategoryDialog();
-            return true;
-        } else if (id == R.id.action_bookmark) {
-            startActivity(new Intent(this, BookmarkActivity.class));
-            return true;
-        } else if (id == R.id.action_mypage) {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user != null) {
-                startActivity(new Intent(this, MyPageActivity.class));
-            } else {
-                startActivity(new Intent(this, LoginActivity.class));
-            }
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -298,15 +283,89 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
     }
-
-    private void showCategoryDialog() {
+    private void showCategoryDialogWithSpinner() {  // 카테고리 검색
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View dialogView = inflater.inflate(R.layout.category_dialog_spinner, null);
+        // Spinner를 레이아웃에서 참조
+        Spinner categoryRestaurantSpinner = dialogView.findViewById(R.id.categoryRestaurantSpinner);
+        Spinner categoryDistancesSpinner = dialogView.findViewById(R.id.categoryDistancesSpinner);
+        CheckBox markerCleanCheckBox = dialogView.findViewById(R.id.markerCleanCheckBox);
+        // AlertDialog.Builder 생성
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("카테고리 선택");
-        builder.setItems(new String[]{"한식", "중식", "일식"}, (dialog, which) -> {
-            String category = which == 0 ? "한식" : which == 1 ? "중식" : "일식";
-            filterRestaurantsByCategory(category);
+        builder.setView(dialogView); // 커스텀 레이아웃을 다이얼로그에 설정
+        builder.setPositiveButton("확인", (dialog, which) -> {
+            String getAddress = getAddressFromLocation(mCurrentLocation); // 사용자 위치 주소 반환
+            // Spinner에서 선택된 항목을 가져옴
+            String selectedRestaurantCategory = categoryRestaurantSpinner.getSelectedItem().toString();
+            String selectedDistancesCategory = categoryDistancesSpinner.getSelectedItem().toString();
+            String[] addressParts = getAddress.split(" "); // 국가 주소 제거후 문자열 결합
+            String addressWithoutFirst = String.join(" ", Arrays.copyOfRange(addressParts, 1, addressParts.length));
+            String[] filteredParts = addressWithoutFirst.split(" ");
+            String filterAddress = "";
+            Log.d("selectedRestaurantCategory", selectedRestaurantCategory + "필터된값:" + Arrays.toString(filteredParts));
+            if(selectedDistancesCategory.equals("[특별시, 도]")){
+                if (filteredParts.length >= 1 && (filteredParts[0].endsWith("도") ||
+                        filteredParts[0].endsWith("특별시"))) {
+                    filterAddress = filteredParts[0];
+                    Log.d("Filter1", "Filtered Address (filterAddress): " + filterAddress);
+                }else{
+                    Log.d("Filter1 Error","Invalid address:" + Arrays.toString(filteredParts));
+                }
+            }else if(selectedDistancesCategory.equals("[시, 구, 군]")){
+                if (filteredParts.length >= 3 && filteredParts[1].endsWith("시") &&
+                        filteredParts.length >= 3 && filteredParts[2].endsWith("구")) {
+                    filterAddress = filteredParts[0] + " " + filteredParts[1] + " " + filteredParts[2];
+                    Log.d("Filter2", "Filtered Address (filterAddress): " + filterAddress);
+                }else if(filteredParts.length >= 2 && (filteredParts[1].endsWith("시") ||
+                        filteredParts[1].endsWith("구") || filteredParts[1].endsWith("군"))){
+                    filterAddress = filteredParts[0] + " " + filteredParts[1];
+                    Log.d("Filter2", "Filtered Address (filterAddress): " + filterAddress);
+                }else{
+                    Log.d("Filter2 Error","Invalid address:" + Arrays.toString(filteredParts));
+                }
+            }else if(selectedDistancesCategory.equals("[동, 읍, 면]")){
+                if (filteredParts.length >= 3 && (filteredParts[2].endsWith("동") || filteredParts[2].endsWith("읍") || filteredParts[2].endsWith("면"))) {
+                    filterAddress = filteredParts[0] + " " + filteredParts[1] + " " + filteredParts[2];
+                    Log.d("Filter3", "Filtered Address (filterAddress): " + filterAddress);
+                } else if (filteredParts.length >= 4 && (filteredParts[3].endsWith("동") || filteredParts[3].endsWith("읍") || filteredParts[3].endsWith("면"))) {
+                    filterAddress = filteredParts[0] + " " + filteredParts[1] + " " + filteredParts[2] + " " + filteredParts[3];
+                    Log.d("Filter3", "Filtered Address (Filter 3): " + filterAddress);
+                }else{
+                    Log.d("Filter3 Error","Invalid address:" + Arrays.toString(filteredParts));
+                }
+            }
+            String categoryQuery = selectedRestaurantCategory + " " + filterAddress;
+            Log.d("categore",categoryQuery);
+            if (markerCleanCheckBox.isChecked()) {
+                clearSearchMarkers();
+                Log.d("MarkerClean", "기존 마커가 제거되었습니다.");
+            }
+            searchRestaurants(categoryQuery);
+            // filterRestaurantsByCategory(selectedRestaurantCategory, filterAddress);
         });
+        builder.setNegativeButton("취소", (dialog, which) -> dialog.dismiss());
         builder.show();
+    }
+
+    private String getAddressFromLocation(Location location) { //현재 위치 주소 반환
+        Geocoder geocoder = new Geocoder(this,  Locale.KOREAN); //지역을 한글로 반환
+        try {
+            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+            if (addresses != null && !addresses.isEmpty()) {
+                Address address = addresses.get(0);
+                String addressText = address.getAddressLine(0);
+                Log.d("AddressFromLocation", "Current Address: " + addressText);
+                return addressText;
+            } else {
+                Log.d("AddressFromLocation", "No address found");
+                return "No address found";
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Geocoder service is not available", Toast.LENGTH_SHORT).show();
+            return "Geocoder service error";
+        }
     }
 
     private void filterRestaurantsByCategory(String category) {
