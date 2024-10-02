@@ -9,7 +9,7 @@
         android:id="@+id/transport_info_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="公共交通情報"
+        android:text="대중교통 정보"
         android:textSize="18sp"
         android:textStyle="bold"
         android:layout_marginBottom="8dp" />
@@ -18,7 +18,7 @@
         android:id="@+id/transport_info_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="経路の情報がここに表示されます。"
+        android:text="경로 정보가 이곳에 표시됩니다."
         android:textSize="14sp"
         android:padding="8dp" />
 </LinearLayout>

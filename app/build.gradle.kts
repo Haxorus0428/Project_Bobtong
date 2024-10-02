@@ -61,6 +61,9 @@ dependencies {
     // Firebase Auth
     implementation("com.google.firebase:firebase-auth:21.0.1")
 
+    // Firebase Storage 라이브러리 추가
+    implementation ("com.google.firebase:firebase-storage:19.2.2")
+
     // Firebase Realtime Database
     implementation("com.google.firebase:firebase-database")
 

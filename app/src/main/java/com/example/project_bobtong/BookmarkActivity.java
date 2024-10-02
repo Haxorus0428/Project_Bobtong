@@ -2,7 +2,6 @@ package com.example.project_bobtong;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -37,8 +36,8 @@ public class BookmarkActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bookmark);
 
-        listView = findViewById(R.id.list_view);
-        noBookmarksText = findViewById(R.id.no_bookmarks_text);
+        listView = findViewById(R.id.listViewBookmarks);
+        noBookmarksText = findViewById(R.id.textViewNoBookmarks);
         bookmarkList = new ArrayList<>();
         List<String> bookmarkTitles = new ArrayList<>();
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, bookmarkTitles);
@@ -53,13 +52,12 @@ public class BookmarkActivity extends AppCompatActivity {
             finish();
         }
 
+        // 북마크 클릭 시 음식점으로 지도 이동
         listView.setOnItemClickListener((parent, view, position, id) -> {
             Restaurant selectedRestaurant = bookmarkList.get(position);
             if (selectedRestaurant != null) {
                 Intent resultIntent = new Intent();
-                resultIntent.putExtra("latitude", selectedRestaurant.getLatitude());
-                resultIntent.putExtra("longitude", selectedRestaurant.getLongitude());
-                resultIntent.putExtra("title", selectedRestaurant.getTitle());
+                resultIntent.putExtra("restaurantId", selectedRestaurant.getId());
                 setResult(RESULT_OK, resultIntent);
                 finish();
             } else {
@@ -98,7 +96,6 @@ public class BookmarkActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("Firebase", "Failed to load bookmarks", error.toException());
                 noBookmarksText.setText("북마크 불러오기에 실패했습니다.");
                 noBookmarksText.setVisibility(View.VISIBLE);
             }

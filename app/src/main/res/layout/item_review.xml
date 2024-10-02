@@ -16,4 +16,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Review" />
+
+    <!-- 추가된 ImageView -->
+    <ImageView
+        android:id="@+id/imageViewReview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:scaleType="centerCrop"
+        android:visibility="gone" />  <!-- 기본적으로 이미지가 없을 때 숨김 -->
+
 </LinearLayout>

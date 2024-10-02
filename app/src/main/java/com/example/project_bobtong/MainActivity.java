@@ -77,15 +77,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private FusedLocationSource mLocationSource;
     private Location mCurrentLocation;
 
-    // Location 객체를 LatLng로 변환하는 메소드
-    private LatLng convertToLatLng(DirectionsResponse.Step.Location location) {return new LatLng(location.lat, location.lng);}
-
     private RecyclerView mRecyclerView;
     private RestaurantAdapter mAdapter;
     private DatabaseReference mDatabase;
     private NaverApiService mNaverApiService;
 
-    private boolean isFirstLoad = true;
     private EditText editTextQuery;
     private Button buttonSearch;
 
@@ -283,6 +279,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
     }
+
     private void showCategoryDialogWithSpinner() {  // 카테고리 검색
         LayoutInflater inflater = LayoutInflater.from(this);
         View dialogView = inflater.inflate(R.layout.category_dialog_spinner, null);
@@ -342,7 +339,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Log.d("MarkerClean", "기존 마커가 제거되었습니다.");
             }
             searchRestaurants(categoryQuery);
-            // filterRestaurantsByCategory(selectedRestaurantCategory, filterAddress);
         });
         builder.setNegativeButton("취소", (dialog, which) -> dialog.dismiss());
         builder.show();
@@ -368,27 +364,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    private void filterRestaurantsByCategory(String category) {
-        // Firebase에서 해당 카테고리에 속하는 음식점을 불러와 지도에 마커로 표시
-        mDatabase.orderByChild("category").equalTo(category).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                clearSearchMarkers(); // 기존 마커 제거
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    Restaurant restaurant = dataSnapshot.getValue(Restaurant.class);
-                    if (restaurant != null) {
-                        addMarkerForRestaurant(restaurant, false); // 검색된 마커는 북마크 아님
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("Firebase", "Failed to load restaurants", error.toException());
-            }
-        });
-    }
-
     private void addMarkerForRestaurant(Restaurant restaurant, boolean isBookmark) {
         double latitude = restaurant.getLatitude() / 10.0;
         double longitude = restaurant.getLongitude() / 10.0;
@@ -396,6 +371,61 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         Marker marker = new Marker();
         marker.setPosition(latLng);
+        // 카테고리에 따라 마커 이미지 설정
+        String category = restaurant.getCategory(); // 음식점의 카테고리 가져오기
+        if (category != null) {
+            switch (category) {
+                case "한식":
+                    marker.setIcon(OverlayImage.fromResource(R.drawable.ic_korean_food)); // 한식 마커 이미지
+                    break;
+                case "중식":
+                    marker.setIcon(OverlayImage.fromResource(R.drawable.ic_chinese_food)); // 중식 마커 이미지
+                    break;
+                case "일식":
+                    marker.setIcon(OverlayImage.fromResource(R.drawable.ic_japanese_food)); // 일식 마커 이미지
+                    break;
+                case "양식":
+                    marker.setIcon(OverlayImage.fromResource(R.drawable.ic_western_food)); // 양식 마커 이미지
+                    break;
+                case "분식":
+                    marker.setIcon(OverlayImage.fromResource(R.drawable.ic_snack)); // 분식 마커 이미지
+                    break;
+                case "치킨":
+                    marker.setIcon(OverlayImage.fromResource(R.drawable.ic_chicken)); // 치킨 마커 이미지
+                    break;
+                case "피자":
+                    marker.setIcon(OverlayImage.fromResource(R.drawable.ic_pizza)); // 피자 마커 이미지
+                    break;
+                case "국수":
+                    marker.setIcon(OverlayImage.fromResource(R.drawable.ic_noodle)); // 국수 마커 이미지
+                    break;
+                case "디저트":
+                    marker.setIcon(OverlayImage.fromResource(R.drawable.ic_dessert)); // 디저트 마커 이미지
+                    break;
+                case "카페":
+                    marker.setIcon(OverlayImage.fromResource(R.drawable.ic_cafe)); // 카페 마커 이미지
+                    break;
+                case "버거":
+                    marker.setIcon(OverlayImage.fromResource(R.drawable.ic_burger)); // 버거 마커 이미지
+                    break;
+                case "구이":
+                    marker.setIcon(OverlayImage.fromResource(R.drawable.ic_grill)); // 구이 마커 이미지
+                    break;
+                case "고기":
+                    marker.setIcon(OverlayImage.fromResource(R.drawable.ic_meat)); // 고기 마커 이미지
+                    break;
+                default:
+                    marker.setIcon(OverlayImage.fromResource(R.drawable.ic_default_food)); // 기본 마커 이미지
+                    break;
+            }
+        } else {
+            marker.setIcon(OverlayImage.fromResource(R.drawable.ic_default_food)); // 기본 마커 이미지
+        }
+        // 기본 크기 설정
+        int markerSize = 70; // 기존 마커와 비슷한 크기
+        marker.setWidth(markerSize);
+        marker.setHeight(markerSize);
+
         marker.setMap(mNaverMap);
 
         if (isBookmark) {
@@ -580,8 +610,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             Marker transportMarker = new Marker();
                             transportMarker.setPosition(changeLatLng);
 
-                            // 이동 수단에 따라 아이콘 설정
-                            switch (travelMode.toLowerCase()) {
+                            // 초기 아이콘 크기 설정
+                            int initialMarkerSize = 100; // 원하는 초기 크기
+                            switch (travelMode) {
                                 case "walking":
                                     transportMarker.setIcon(OverlayImage.fromResource(R.drawable.ic_walk));
                                     break;
@@ -597,21 +628,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     break;
                             }
 
-                            // 이동수단 마커 설정 및 반응형 사이즈 조절
-                            transportMarker.setMap(mNaverMap);
-                            transitMarkers.add(transportMarker); // 마커 리스트에 추가
-
-                            // 이동 수단 마커를 지도에 추가하는 코드 내 수정 부분
-                            mNaverMap.addOnCameraChangeListener((reason, animated) -> {
-                                double zoom = mNaverMap.getCameraPosition().zoom;
-
-                                // 새로운 아이콘 크기 조절 공식 - 축소 상태에서 크기를 키우고 확대 시 너무 작아지지 않도록 조정
-                                int size = (int) (60 * Math.pow(0.9, (15 - zoom) / 2.0)); // 확대 시 더 크게, 축소 시 적당히 보이도록 설정
-
-                                // 아이콘 크기 설정
-                                transportMarker.setWidth(Math.max(size, 150));  // 최소 크기를 40으로 설정하여 너무 작아지지 않게
-                                transportMarker.setHeight(Math.max(size, 150));
-                            });
+                            // 초기 크기를 설정
+                            transportMarker.setWidth(initialMarkerSize);
+                            transportMarker.setHeight(initialMarkerSize);
 
                             transportMarker.setMap(mNaverMap);
                             transitMarkers.add(transportMarker); // 마커 리스트에 추가
@@ -647,6 +666,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
     }
+
     // 경로 안내 정보를 다이얼로그로 표시하는 메소드
     private void showTransitInfoDialog(String transitInfo, String distanceText, String durationText) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -663,11 +683,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         LatLng currentLatLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
 
-        /*circleOverlay = new CircleOverlay();
+        circleOverlay = new CircleOverlay();
         circleOverlay.setCenter(currentLatLng);
         circleOverlay.setRadius(1000);
         circleOverlay.setColor(Color.parseColor("#220000FF")); // 반투명한 파란색
-        circleOverlay.setMap(mNaverMap);*/
+        circleOverlay.setMap(mNaverMap);
     }
 
     @Override
@@ -679,5 +699,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             return;
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    private LatLng convertToLatLng(DirectionsResponse.Step.Location location) {
+        return new LatLng(location.lat, location.lng);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        if (intent != null && mNaverMap != null) {
+            double latitude = intent.getDoubleExtra("latitude", 0);
+            double longitude = intent.getDoubleExtra("longitude", 0);
+            String title = intent.getStringExtra("title");
+
+            if (latitude != 0 && longitude != 0) {
+                LatLng latLng = new LatLng(latitude, longitude);
+                mNaverMap.moveCamera(CameraUpdate.scrollTo(latLng));
+                Toast.makeText(this, title + "로 이동합니다.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
