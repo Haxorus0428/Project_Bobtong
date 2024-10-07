@@ -1,11 +1,11 @@
 package com.example.project_bobtong;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,8 +25,8 @@ public class MyReviewsActivity extends AppCompatActivity {
 
     private ListView listView;
     private TextView noReviewsText;
-    private List<String> reviewList;
-    private ArrayAdapter<String> adapter;
+    private List<Review> reviewList; // Review 객체 리스트
+    private ArrayAdapter<Review> adapter;
     private DatabaseReference reviewsRef;
 
     @Override
@@ -37,7 +37,7 @@ public class MyReviewsActivity extends AppCompatActivity {
         listView = findViewById(R.id.listView);
         noReviewsText = findViewById(R.id.no_reviews_text);
         reviewList = new ArrayList<>();
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, reviewList);
+        adapter = new ReviewAdapter(this, reviewList); // ReviewAdapter 사용
         listView.setAdapter(adapter);
 
         Button backButton = findViewById(R.id.back_button);
@@ -45,7 +45,7 @@ public class MyReviewsActivity extends AppCompatActivity {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
-            reviewsRef = FirebaseDatabase.getInstance().getReference("reviews").child(user.getUid());
+            reviewsRef = FirebaseDatabase.getInstance().getReference("restaurant_reviews").child(user.getUid());
             loadReviews();
         } else {
             noReviewsText.setText("로그인이 필요합니다.");
@@ -60,9 +60,9 @@ public class MyReviewsActivity extends AppCompatActivity {
                 reviewList.clear();
                 if (snapshot.exists()) {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        String review = dataSnapshot.getValue(String.class);
+                        Review review = dataSnapshot.getValue(Review.class);
                         if (review != null) {
-                            reviewList.add(review);
+                            reviewList.add(review); // Review 객체 추가
                         }
                     }
                     adapter.notifyDataSetChanged();

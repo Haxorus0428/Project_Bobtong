@@ -5,11 +5,12 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <EditText
-        android:id="@+id/editTextReview"
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/buttonSubmitReview"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="리뷰를 작성해주세요" />
+        android:layout_marginTop="16dp"
+        android:text="리뷰 제출" />
 
     <Button
         android:id="@+id/buttonChooseImage"
@@ -25,10 +26,10 @@
         android:layout_marginTop="16dp"
         android:visibility="gone" />
 
-    <Button
-        android:id="@+id/buttonSubmitReview"
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/editTextReview"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="리뷰 제출"
-        android:layout_marginTop="16dp" />
+        android:hint="리뷰를 작성해주세요" />
+
 </LinearLayout>

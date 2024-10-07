@@ -13,7 +13,10 @@ import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 
+import java.text.SimpleDateFormat; // Import 추가
+import java.util.Date; // Import 추가
 import java.util.List;
+import java.util.Locale; // Import 추가
 
 public class ReviewAdapter extends ArrayAdapter<Review> {
 
@@ -33,9 +36,10 @@ public class ReviewAdapter extends ArrayAdapter<Review> {
         TextView textViewUserId = convertView.findViewById(R.id.textViewUserId);
         TextView textViewReviewText = convertView.findViewById(R.id.textViewReviewText);
         ImageView imageViewReview = convertView.findViewById(R.id.imageViewReview);
+        TextView textViewTimestamp = convertView.findViewById(R.id.textViewTimestamp); // 타임스탬프를 위한 텍스트뷰
 
         if (review != null) {
-            textViewUserId.setText(review.getUserId().substring(0, 4) + "****");
+            textViewUserId.setText(review.getUserName()); // 닉네임만 보여줌
             textViewReviewText.setText(review.getReviewText());
 
             // 이미지 URL이 있을 경우, 이미지를 로드하고 없으면 ImageView를 숨김
@@ -47,6 +51,11 @@ public class ReviewAdapter extends ArrayAdapter<Review> {
             } else {
                 imageViewReview.setVisibility(View.GONE);  // 이미지가 없을 경우 숨김
             }
+
+            // 작성일시 추가
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            String formattedDate = sdf.format(new Date(review.getTimestamp())); // Timestamp를 Date로 변환
+            textViewTimestamp.setText(formattedDate); // 작성일시 설정
         }
 
         return convertView;

@@ -11,18 +11,12 @@
         android:layout_height="wrap_content"
         android:text="돌아가기" />
 
-    <EditText
-        android:id="@+id/editTextReview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="리뷰를 작성해주세요." />
-
-    <!-- 사진 추가 버튼 -->
     <Button
-        android:id="@+id/buttonAddPhoto"
+        android:id="@+id/buttonSubmitReview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="사진 추가" />
+        android:layout_marginTop="16dp"
+        android:text="리뷰 작성하기" />
 
     <ImageView
         android:id="@+id/imageViewReviewPhoto"
@@ -30,13 +24,6 @@
         android:layout_height="200dp"
         android:visibility="gone"
         android:scaleType="centerCrop" />
-
-    <Button
-        android:id="@+id/buttonSubmitReview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="제출" />
 
     <TextView
         android:id="@+id/no_reviews_text"

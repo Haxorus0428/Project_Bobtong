@@ -17,6 +17,14 @@
         android:layout_height="wrap_content"
         android:text="Review" />
 
+    <TextView
+        android:id="@+id/textViewTimestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="작성일시"
+        android:textSize="12sp"
+        android:textColor="@android:color/darker_gray" />
+
     <!-- 추가된 ImageView -->
     <ImageView
         android:id="@+id/imageViewReview"

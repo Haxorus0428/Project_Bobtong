@@ -3,11 +3,9 @@ package com.example.project_bobtong;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,16 +16,19 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class RestaurantReviewsActivity extends AppCompatActivity {
 
     private ListView listView;
     private TextView noReviewsText;
     private Button buttonWriteReview;
-    private List<String> reviewList;
-    private ArrayAdapter<String> adapter;
+    private List<Review> reviewList; // List<Review>로 변경
+    private ReviewAdapter adapter;
     private DatabaseReference reviewsRef;
 
     @Override
@@ -38,8 +39,8 @@ public class RestaurantReviewsActivity extends AppCompatActivity {
         listView = findViewById(R.id.listView);
         noReviewsText = findViewById(R.id.no_reviews_text);
         buttonWriteReview = findViewById(R.id.buttonSubmitReview); // 리뷰 작성 버튼
-        reviewList = new ArrayList<>();
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, reviewList);
+        reviewList = new ArrayList<>(); // List<Review>로 변경
+        adapter = new ReviewAdapter(this, reviewList);
         listView.setAdapter(adapter);
 
         Button backButton = findViewById(R.id.back_button);
@@ -70,8 +71,11 @@ public class RestaurantReviewsActivity extends AppCompatActivity {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         Review review = dataSnapshot.getValue(Review.class);
                         if (review != null) {
-                            String reviewDisplay = review.getUserName() + " (" + review.getTimestamp() + ")\n" + review.getReviewText();
-                            reviewList.add(reviewDisplay);
+                            // 리뷰 작성 시간을 포맷팅
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                            String timestamp = sdf.format(new Date(review.getTimestamp()));
+                            review.setTimestamp(review.getTimestamp()); // Timestamp 업데이트
+                            reviewList.add(review); // Review 객체를 추가
                         }
                     }
                     adapter.notifyDataSetChanged();
