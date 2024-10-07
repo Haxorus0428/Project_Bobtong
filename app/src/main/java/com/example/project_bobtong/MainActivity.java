@@ -224,6 +224,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         transitMarkers.clear();
     }
 
+    // 기존 검색 및 Firebase 저장 로직을 수정한 부분
+
     private void searchRestaurants(String query) {
         Call<SearchResponse> call = mNaverApiService.searchRestaurants(query, 10, 1, "random", SEARCH_CLIENT_ID, SEARCH_CLIENT_SECRET);
         call.enqueue(new Callback<SearchResponse>() {
@@ -246,24 +248,46 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         restaurant.setMapx(restaurant.getMapx());
                         restaurant.setMapy(restaurant.getMapy());
 
-                        // Firebase에 데이터 저장
-                        String key = mDatabase.push().getKey();
-                        if (key != null) {
-                            restaurant.setId(key); // ID 설정
-                            mDatabase.child(key).setValue(restaurant).addOnCompleteListener(task -> {
-                                if (task.isSuccessful()) {
-                                    Log.d("Firebase", "Restaurant saved: " + restaurant.getTitle());
-                                } else {
-                                    Log.e("Firebase", "Failed to save restaurant", task.getException());
-                                }
-                            });
-                        }
+                        // 음식점 ID가 중복되지 않도록 Firebase에서 먼저 체크
+                        mDatabase.orderByChild("title").equalTo(restaurant.getTitle())
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        if (snapshot.exists()) {
+                                            // 기존 음식점이 있으면 해당 데이터 사용
+                                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                                Restaurant existingRestaurant = dataSnapshot.getValue(Restaurant.class);
+                                                if (existingRestaurant != null) {
+                                                    restaurant.setId(existingRestaurant.getId());
+                                                    Log.d("Firebase", "Existing restaurant found: " + restaurant.getTitle());
+                                                    break;
+                                                }
+                                            }
+                                        } else {
+                                            // 기존 데이터가 없으면 새로운 ID로 추가
+                                            String key = mDatabase.push().getKey();
+                                            if (key != null) {
+                                                restaurant.setId(key);
+                                                mDatabase.child(key).setValue(restaurant).addOnCompleteListener(task -> {
+                                                    if (task.isSuccessful()) {
+                                                        Log.d("Firebase", "New restaurant saved: " + restaurant.getTitle());
+                                                    } else {
+                                                        Log.e("Firebase", "Failed to save restaurant", task.getException());
+                                                    }
+                                                });
+                                            }
+                                        }
+                                        // 지도에 마커 추가
+                                        addMarkerForRestaurant(restaurant, false);
+                                    }
 
-                        // 지도에 마커 추가
-                        addMarkerForRestaurant(restaurant, false); // 검색된 마커는 북마크 아님
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                        Log.e("Firebase", "Failed to check restaurant", error.toException());
+                                    }
+                                });
                     }
 
-                    // RecyclerView에 검색 결과 표시
                     mAdapter.setRestaurants(restaurants);
                     slidingLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
                 } else {

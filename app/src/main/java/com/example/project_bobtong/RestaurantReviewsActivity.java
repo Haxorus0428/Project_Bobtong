@@ -2,6 +2,7 @@ package com.example.project_bobtong;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -25,7 +26,7 @@ public class RestaurantReviewsActivity extends AppCompatActivity {
     private ListView listView;
     private TextView noReviewsText;
     private Button buttonWriteReview;
-    private List<Review> reviewList; // List<Review>로 변경
+    private List<Review> reviewList;
     private ReviewAdapter adapter;
     private DatabaseReference reviewsRef;
 
@@ -36,8 +37,8 @@ public class RestaurantReviewsActivity extends AppCompatActivity {
 
         listView = findViewById(R.id.listView);
         noReviewsText = findViewById(R.id.no_reviews_text);
-        buttonWriteReview = findViewById(R.id.buttonSubmitReview); // 리뷰 작성 버튼
-        reviewList = new ArrayList<>(); // List<Review>로 변경
+        buttonWriteReview = findViewById(R.id.buttonSubmitReview);
+        reviewList = new ArrayList<>();
         adapter = new ReviewAdapter(this, reviewList);
         listView.setAdapter(adapter);
 
@@ -46,6 +47,7 @@ public class RestaurantReviewsActivity extends AppCompatActivity {
 
         String restaurantId = getIntent().getStringExtra("restaurantId");
         if (restaurantId != null) {
+            Log.d("FirebaseData", "Restaurant ID: " + restaurantId); // 경로 확인을 위해 로그 추가
             reviewsRef = FirebaseDatabase.getInstance().getReference("restaurant_reviews").child(restaurantId);
             loadReviews();
 
@@ -55,6 +57,7 @@ public class RestaurantReviewsActivity extends AppCompatActivity {
                 startActivity(intent);
             });
         } else {
+            Log.e("FirebaseData", "restaurantId is null");
             noReviewsText.setText("음식점 정보가 없습니다.");
             noReviewsText.setVisibility(View.VISIBLE);
         }
@@ -65,6 +68,9 @@ public class RestaurantReviewsActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 reviewList.clear();
+                Log.d("FirebaseData", "DataSnapshot exists: " + snapshot.exists()); // 존재 여부 로그 추가
+                Log.d("FirebaseData", "DataSnapshot contents: " + snapshot.toString()); // DataSnapshot 내용 로그 추가
+
                 if (snapshot.exists()) {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         Review review = dataSnapshot.getValue(Review.class);
@@ -84,6 +90,7 @@ public class RestaurantReviewsActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("FirebaseData", "리뷰 불러오기 실패: " + error.getMessage());
                 noReviewsText.setText("리뷰 불러오기를 실패했습니다.");
                 noReviewsText.setVisibility(View.VISIBLE);
             }
