@@ -16,11 +16,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 public class RestaurantReviewsActivity extends AppCompatActivity {
 
@@ -71,14 +69,14 @@ public class RestaurantReviewsActivity extends AppCompatActivity {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         Review review = dataSnapshot.getValue(Review.class);
                         if (review != null) {
-                            // 리뷰 작성 시간을 포맷팅
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                            String timestamp = sdf.format(new Date(review.getTimestamp()));
-                            review.setTimestamp(review.getTimestamp()); // Timestamp 업데이트
-                            reviewList.add(review); // Review 객체를 추가
+                            reviewList.add(review); // 리뷰 리스트에 추가
                         }
                     }
-                    adapter.notifyDataSetChanged();
+
+                    // 최신순으로 정렬 (타임스탬프를 기준으로 내림차순 정렬)
+                    Collections.sort(reviewList, (r1, r2) -> Long.compare(r2.getTimestamp(), r1.getTimestamp()));
+
+                    adapter.notifyDataSetChanged(); // 어댑터 업데이트
                 }
 
                 noReviewsText.setVisibility(reviewList.isEmpty() ? View.VISIBLE : View.GONE);

@@ -13,10 +13,10 @@ import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 
-import java.text.SimpleDateFormat; // Import 추가
-import java.util.Date; // Import 추가
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
-import java.util.Locale; // Import 추가
+import java.util.Locale;
 
 public class ReviewAdapter extends ArrayAdapter<Review> {
 
@@ -53,8 +53,15 @@ public class ReviewAdapter extends ArrayAdapter<Review> {
             }
 
             // 작성일시 추가
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-            String formattedDate = sdf.format(new Date(review.getTimestamp())); // Timestamp를 Date로 변환
+            long timestamp = review.getTimestamp();
+            String formattedDate;
+            if (System.currentTimeMillis() - timestamp < 86400000) { // 24시간 이내
+                long hoursAgo = (System.currentTimeMillis() - timestamp) / 3600000;
+                formattedDate = hoursAgo + "시간 전";
+            } else {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy년 MM월 dd일", Locale.getDefault());
+                formattedDate = sdf.format(new Date(timestamp));
+            }
             textViewTimestamp.setText(formattedDate); // 작성일시 설정
         }
 

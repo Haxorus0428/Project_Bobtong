@@ -2,7 +2,6 @@ package com.example.project_bobtong;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -19,6 +18,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class MyReviewsActivity extends AppCompatActivity {
@@ -26,7 +27,7 @@ public class MyReviewsActivity extends AppCompatActivity {
     private ListView listView;
     private TextView noReviewsText;
     private List<Review> reviewList; // Review 객체 리스트
-    private ArrayAdapter<Review> adapter;
+    private ReviewAdapter adapter;
     private DatabaseReference reviewsRef;
 
     @Override
@@ -45,34 +46,39 @@ public class MyReviewsActivity extends AppCompatActivity {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
-            reviewsRef = FirebaseDatabase.getInstance().getReference("restaurant_reviews").child(user.getUid());
-            loadReviews();
+            // restaurant_reviews 경로에서 사용자가 작성한 모든 리뷰 불러오기
+            reviewsRef = FirebaseDatabase.getInstance().getReference("restaurant_reviews");
+            loadAllUserReviews(user.getUid());
         } else {
             noReviewsText.setText("로그인이 필요합니다.");
             noReviewsText.setVisibility(View.VISIBLE);
         }
     }
 
-    private void loadReviews() {
+    private void loadAllUserReviews(String userId) {
         reviewsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 reviewList.clear();
-                if (snapshot.exists()) {
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        Review review = dataSnapshot.getValue(Review.class);
-                        if (review != null) {
-                            reviewList.add(review); // Review 객체 추가
+                for (DataSnapshot restaurantSnapshot : snapshot.getChildren()) {
+                    for (DataSnapshot reviewSnapshot : restaurantSnapshot.getChildren()) {
+                        Review review = reviewSnapshot.getValue(Review.class);
+                        if (review != null && userId.equals(review.getUserId())) {
+                            reviewList.add(review);
                         }
                     }
-                    adapter.notifyDataSetChanged();
                 }
 
-                if (reviewList.isEmpty()) {
-                    noReviewsText.setVisibility(View.VISIBLE);
-                } else {
-                    noReviewsText.setVisibility(View.GONE);
-                }
+                // 작성 시간이 오래된 순서대로 정렬
+                Collections.sort(reviewList, new Comparator<Review>() {
+                    @Override
+                    public int compare(Review r1, Review r2) {
+                        return Long.compare(r2.getTimestamp(), r1.getTimestamp());
+                    }
+                });
+
+                adapter.notifyDataSetChanged();
+                noReviewsText.setVisibility(reviewList.isEmpty() ? View.VISIBLE : View.GONE);
             }
 
             @Override

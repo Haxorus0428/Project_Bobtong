@@ -3,6 +3,7 @@ package com.example.project_bobtong;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -115,6 +116,7 @@ public class WriteReviewActivity extends AppCompatActivity {
             if (key != null) {
                 mDatabase.child(restaurantId).child(key).setValue(review).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+                        Log.d("WriteReviewActivity", "Review submitted: " + reviewText); // 로그 추가
                         Toast.makeText(WriteReviewActivity.this, "리뷰가 제출되었습니다.", Toast.LENGTH_SHORT).show();
                         finish(); // 작성 완료 후 액티비티 종료
                     } else {
