@@ -93,6 +93,8 @@
         android:layout_height="70dp"
         android:layout_alignParentBottom="true"
         app:menu="@menu/bottom_navigation_menu"
+        app:itemIconTint="@null"
+        app:itemTextColor="@color/nav_item_color"
         app:itemBackground="@drawable/nav_item_background" />
 
 </RelativeLayout>
