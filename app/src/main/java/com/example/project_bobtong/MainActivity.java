@@ -462,16 +462,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }else if(selectedDistancesCategory.equals("[동, 읍, 면]")){
                 if (filteredParts.length >= 3 && (filteredParts[2].endsWith("동") || filteredParts[2].endsWith("읍") || filteredParts[2].endsWith("면"))) {
                     filterAddress = filteredParts[0] + " " + filteredParts[1] + " " + filteredParts[2];
-                    Log.d("Filter3", "Filtered Address (filterAddress): " + filterAddress);
+                    Log.d("Filter3", "Filtered Address (Filter 3): " + filterAddress);
                 } else if (filteredParts.length >= 4 && (filteredParts[3].endsWith("동") || filteredParts[3].endsWith("읍") || filteredParts[3].endsWith("면"))) {
                     filterAddress = filteredParts[0] + " " + filteredParts[1] + " " + filteredParts[2] + " " + filteredParts[3];
                     Log.d("Filter3", "Filtered Address (Filter 3): " + filterAddress);
-                }else{
+                } else if (filteredParts.length >= 3 && (filteredParts[2].endsWith("로") || filteredParts[3].endsWith("길"))) {
+                    filterAddress = filteredParts[0] + " " + filteredParts[1] + " " + filteredParts[2];
+                    Log.d("Filter3", "Filtered Address (Filter 3): " + filterAddress);
+                } else if (filteredParts.length >= 4 && (filteredParts[3].endsWith("로") || filteredParts[3].endsWith("길"))) {
+                    filterAddress = filteredParts[0] + " " + filteredParts[1] + " " + filteredParts[2] + " " + filteredParts[3];
+                    Log.d("Filter3", "Filtered Address (Filter 3): " + filterAddress);
+                }else {
                     Log.d("Filter3 Error","Invalid address:" + Arrays.toString(filteredParts));
                 }
             }
             String categoryQuery = selectedRestaurantCategory + " " + filterAddress;
-            Log.d("categore",categoryQuery);
+            Log.d("category",categoryQuery);
             if (markerCleanCheckBox.isChecked()) {
                 clearSearchMarkers();
                 Log.d("MarkerClean", "기존 마커가 제거되었습니다.");

@@ -2,7 +2,6 @@ package com.example.project_bobtong;
 
 public class Review {
     private String userId;
-    private String restaurantId;
     private String reviewText;
     private String userName;
     private String imageUrl; // 이미지 URL을 위한 필드 추가
@@ -15,7 +14,6 @@ public class Review {
     // 생성자 수정: 이미지가 없을 경우를 위해 imageUrl을 null 허용
     public Review(String userId, String restaurantId, String reviewText, String userName, String imageUrl, long timestamp) {
         this.userId = userId;
-        this.restaurantId = restaurantId;
         this.reviewText = reviewText;
         this.userName = userName;
         this.imageUrl = imageUrl; // 이미지 URL을 설정
@@ -31,13 +29,6 @@ public class Review {
         this.userId = userId;
     }
 
-    public String getRestaurantId() {
-        return restaurantId;
-    }
-
-    public void setRestaurantId(String restaurantId) {
-        this.restaurantId = restaurantId;
-    }
 
     public String getReviewText() {
         return reviewText;
