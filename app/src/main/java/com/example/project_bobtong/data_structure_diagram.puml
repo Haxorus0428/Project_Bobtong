@@ -1,0 +1,51 @@
+@startuml
+' Firebase RDB 구조
+
+entity "bookmarks" {
+  * id : String
+  --
+  * address : String
+  * category : String
+  * latitude : Float
+  * longitude : Float
+  * mapx : Integer
+  * mapy : Integer
+  * title : String
+}
+
+entity "restaurant_reviews" {
+  * reviewId : String
+  --
+  * imageUrl : String
+  * restaurantId : String
+  * reviewText : String
+  * timestamp : Long
+  * userId : String
+  * userName : String
+}
+
+entity "restaurants" {
+  * id : String
+  --
+  * address : String
+  * category : String
+  * latitude : Float
+  * longitude : Float
+  * mapx : Integer
+  * mapy : Integer
+  * title : String
+}
+
+entity "users" {
+  * userId : String
+  --
+  * email : String
+  * handle : String
+}
+
+' 관계 설정
+bookmarks --> restaurants : 관련된 음식점
+restaurant_reviews --> users : 리뷰 작성자
+restaurant_reviews --> restaurants : 리뷰된 음식점
+
+@enduml

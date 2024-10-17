@@ -713,12 +713,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             acceptSetIcon = "음식아이콘";
                             break;
                         default:
-                            Drawable defaultFoodMarker = getResources().getDrawable(R.drawable.ic_default_food); // 그외 음식 마커 이미지
-                            defaultFoodMarker.setBounds(20, 20, 90, 90);
-                            defaultFoodMarker.draw(canvas);
                             acceptSetIcon = "기본아이콘";
                     }
                 }
+            }
+            if(acceptSetIcon == "기본아이콘") {
+                Drawable defaultFoodMarker = getResources().getDrawable(R.drawable.ic_default_food); // 그외 음식 마커 이미지
+                defaultFoodMarker.setBounds(20, 20, 90, 90);
+                defaultFoodMarker.draw(canvas);
             }
         } else {
             Drawable defaultMarker = getResources().getDrawable(R.drawable.ic_default); // 기본 마커 이미지
